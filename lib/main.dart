@@ -228,7 +228,7 @@ class _TaskItemState extends State<TaskItem> {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final Color priorityColor;
-    debugPrint(widget.task.priority.toString());
+
     switch (widget.task.priority) {
       case Priority.low:
         priorityColor = lowPriority;
@@ -240,14 +240,17 @@ class _TaskItemState extends State<TaskItem> {
         priorityColor = highPriority;
         break;
     }
+
     return InkWell(
       onTap: () {
-        setState(() {
-          widget.task.isCompleted = !widget.task.isCompleted;
-        });
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EditTaskScreen(task: widget.task),
+          ),
+        );
       },
       child: Container(
-        height: 84,
+        height: 74,
         margin: const EdgeInsets.only(top: 8),
         padding: const EdgeInsets.only(left: 16),
         decoration: BoxDecoration(
@@ -256,7 +259,14 @@ class _TaskItemState extends State<TaskItem> {
         ),
         child: Row(
           children: [
-            MyCheckBox(value: widget.task.isCompleted),
+            MyCheckBox(
+              value: widget.task.isCompleted,
+              onTap: () {
+                setState(() {
+                  widget.task.isCompleted = !widget.task.isCompleted;
+                });
+              },
+            ),
             const SizedBox(
               width: 16,
             ),
@@ -266,7 +276,6 @@ class _TaskItemState extends State<TaskItem> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: 24,
                   decoration: widget.task.isCompleted ? TextDecoration.lineThrough : null,
                 ),
               ),
@@ -294,26 +303,30 @@ class _TaskItemState extends State<TaskItem> {
 
 class MyCheckBox extends StatelessWidget {
   final bool value;
+  final GestureTapCallback onTap;
 
-  const MyCheckBox({Key? key, required this.value}) : super(key: key);
+  const MyCheckBox({Key? key, required this.value, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: !value ? Border.all(color: secondaryTextColor, width: 2) : null,
-          color: value ? primaryColor : null),
-      child: value
-          ? Icon(
-              CupertinoIcons.check_mark,
-              size: 16,
-              color: themeData.colorScheme.onPrimary,
-            )
-          : null,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 24,
+        height: 24,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: !value ? Border.all(color: secondaryTextColor, width: 2) : null,
+            color: value ? primaryColor : null),
+        child: value
+            ? Icon(
+                CupertinoIcons.check_mark,
+                size: 16,
+                color: themeData.colorScheme.onPrimary,
+              )
+            : null,
+      ),
     );
   }
 }
