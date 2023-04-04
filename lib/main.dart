@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:task_list/consts.dart';
 import 'package:task_list/data.dart';
 import 'package:task_list/edit.dart';
 
@@ -226,6 +227,19 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
+    final Color priorityColor;
+    debugPrint(widget.task.priority.toString());
+    switch (widget.task.priority) {
+      case Priority.low:
+        priorityColor = lowPriority;
+        break;
+      case Priority.normal:
+        priorityColor = normalPriority;
+        break;
+      case Priority.high:
+        priorityColor = highPriority;
+        break;
+    }
     return InkWell(
       onTap: () {
         setState(() {
@@ -235,7 +249,7 @@ class _TaskItemState extends State<TaskItem> {
       child: Container(
         height: 84,
         margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.only(left: 16, right: 16),
+        padding: const EdgeInsets.only(left: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: themeData.colorScheme.surface,
@@ -257,6 +271,20 @@ class _TaskItemState extends State<TaskItem> {
                 ),
               ),
             ),
+            const SizedBox(
+              width: 8,
+            ),
+            Container(
+              width: 4,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: priorityColor,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+              ),
+            )
           ],
         ),
       ),

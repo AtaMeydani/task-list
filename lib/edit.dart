@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:task_list/consts.dart';
 import 'package:task_list/data.dart';
 import 'package:task_list/main.dart';
 
@@ -30,14 +31,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          final task = TaskEntity();
-          task.name = _controller.text;
-          task.priority = Priority.low;
-          if (task.isInBox) {
-            task.save();
+          widget.task.name = _controller.text;
+          if (widget.task.isInBox) {
+            widget.task.save();
           } else {
             final Box<TaskEntity> box = Hive.box(taskBoxName);
-            box.add(task);
+            box.add(widget.task);
           }
 
           Navigator.of(context).pop();
@@ -68,7 +67,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                       });
                     },
                     label: 'High',
-                    color: primaryColor,
+                    color: highPriority,
                     isSelected: widget.task.priority == Priority.high,
                   ),
                 ),
@@ -84,7 +83,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                       });
                     },
                     label: 'Normal',
-                    color: const Color(0xffF09819),
+                    color: normalPriority,
                     isSelected: widget.task.priority == Priority.normal,
                   ),
                 ),
@@ -100,7 +99,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                       });
                     },
                     label: 'Low',
-                    color: const Color(0xff3BE1F1),
+                    color: lowPriority,
                     isSelected: widget.task.priority == Priority.low,
                   ),
                 ),
