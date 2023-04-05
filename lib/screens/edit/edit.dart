@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:task_list/consts.dart';
-import 'package:task_list/data.dart';
-import 'package:task_list/main.dart';
+import 'package:task_list/data/data.dart';
+import 'package:task_list/data/repo/repository.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final TaskEntity task;
@@ -32,12 +32,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           widget.task.name = _controller.text;
-          if (widget.task.isInBox) {
-            widget.task.save();
-          } else {
-            final Box<TaskEntity> box = Hive.box(taskBoxName);
-            box.add(widget.task);
-          }
+          final repository = Provider.of<Repository<TaskEntity>>(context, listen: false);
+          repository.createOrUpdate(widget.task);
 
           Navigator.of(context).pop();
         },
@@ -60,14 +56,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               children: [
                 Flexible(
                   flex: 1,
-                  child: PriorityCheckBox(
+                  child: _CheckBox(
                     onTap: () {
                       setState(() {
                         widget.task.priority = Priority.high;
                       });
                     },
                     label: 'High',
-                    color: highPriority,
+                    color: highPriorityColor,
                     isSelected: widget.task.priority == Priority.high,
                   ),
                 ),
@@ -76,14 +72,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 ),
                 Flexible(
                   flex: 1,
-                  child: PriorityCheckBox(
+                  child: _CheckBox(
                     onTap: () {
                       setState(() {
                         widget.task.priority = Priority.normal;
                       });
                     },
                     label: 'Normal',
-                    color: normalPriority,
+                    color: normalPriorityColor,
                     isSelected: widget.task.priority == Priority.normal,
                   ),
                 ),
@@ -92,14 +88,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 ),
                 Flexible(
                   flex: 1,
-                  child: PriorityCheckBox(
+                  child: _CheckBox(
                     onTap: () {
                       setState(() {
                         widget.task.priority = Priority.low;
                       });
                     },
                     label: 'Low',
-                    color: lowPriority,
+                    color: lowPriorityColor,
                     isSelected: widget.task.priority == Priority.low,
                   ),
                 ),
@@ -121,13 +117,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   }
 }
 
-class PriorityCheckBox extends StatelessWidget {
+class _CheckBox extends StatelessWidget {
   final String label;
   final Color color;
   final bool isSelected;
   final GestureTapCallback onTap;
-  const PriorityCheckBox(
-      {Key? key, required this.label, required this.color, required this.isSelected, required this.onTap})
+  const _CheckBox({Key? key, required this.label, required this.color, required this.isSelected, required this.onTap})
       : super(key: key);
 
   @override
