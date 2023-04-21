@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_list/consts.dart';
+import 'package:task_list/data/repo/repository.dart';
+import 'package:task_list/screens/edit/cubit/edit_task_cubit.dart';
 import 'package:task_list/screens/edit/edit.dart';
 
 import '../data/data.dart';
@@ -39,7 +42,10 @@ class _TaskItemState extends State<TaskItem> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => EditTaskScreen(task: widget.task),
+            builder: (context) => BlocProvider<EditTaskCubit>(
+              create: (context) => EditTaskCubit(widget.task, context.read<Repository<TaskEntity>>()),
+              child: const EditTaskScreen(),
+            ),
           ),
         );
       },
